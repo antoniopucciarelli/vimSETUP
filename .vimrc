@@ -16,22 +16,25 @@ set undofile
 set incsearch 
 set clipboard=unnamedplus
 
-set colorcolumn=132
-highlight ColorColumn ctermbg=0 guibg=lightgrey
+" if vim treats with fortran file
+" fortran has a line limit of 80 characters per line or 132 character per line 
+filetype detect
+if (&filetype=='fortran')
+    set colorcolumn=132
+    highlight ColorColumn ctermbg=0 guibg=lightgrey
+endif
 
 call plug#begin('~/.vim/plugged')
     
     Plug 'morhetz/gruvbox'
     Plug 'preservim/nerdtree'    
     Plug 'itchyny/lightline.vim'
-    " A Vim Plugin for Lively Previewing LaTeX PDF Output
-    Plug 'xuhdev/vim-latex-live-preview', { 'for': 'tex' }
 
 call plug#end()
 
 " vundle plugin 
-set nocompatible              " be iMproved, required
-filetype off                  " required
+set nocompatible " be iMproved, required
+filetype off     " required
 
 " set the runtime path to include Vundle and initialize
 set rtp+=~/.vim/bundle/Vundle.vim
@@ -41,20 +44,20 @@ call vundle#begin()
     Plugin 'VundleVim/Vundle.vim'
     Plugin 'effi/vim-OpenFoam-syntax'
 
-call vundle#end()            " required
-filetype plugin indent on    " required
+call vundle#end()         " required
+filetype plugin indent on " required
 
 colorscheme gruvbox 
 set background=dark 
 
 " NERDtree setting
-" mappint nerdtree 
+" mapping nerdtree 
 map <C-n> :NERDTreeToggle<CR>
 " starting automatically nerdtree
 " autocmd vimenter * NERDTree
 autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-autocmd bufenter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | q | endif
+autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | quit | endif
 
 " This line turns on backups:
 set backup
@@ -92,18 +95,23 @@ inoremap <S-Tab> <C-D>
 vnoremap <Tab> >gv
 vnoremap <S-Tab> <gv
 
-" set up lightline status [insert, replace, ...]
+" set up lightline status
 set laststatus=2
+set noshowmode
 let g:lightline = {
       \ 'colorscheme': 'seoul256',
       \ 'active': {
       \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'readonly', 'filename', 'modified', 'charvaluehex' ] ]
+      \             [ 'filename', 'modified' ],
+      \             [ 'gitbranch' ] ],
+      \   'right': [ [ 'percent', 'lineinfo' ],
+      \              [ 'filetype' ],
+      \              [ 'fileformat', 'fileencoding' ] ]
       \ },
-      \ 'component': {
-      \   'charvaluehex': '0x%B'
+      \ 'component_function': {
+      \   'gitbranch': 'FugitiveHead',
       \ },
-      \ }
+      \}
 
 " adding whole text selection mapping 
 map <C-a> <esc>ggVG<CR>
@@ -112,8 +120,3 @@ map <C-a> <esc>ggVG<CR>
 set mouse=nicr
 set mouse=a
 
-" latex support 
-let g:livepreview_previewer = 'evince'
-let g:livepreview_use_biber = 1
-let g:livepreview_cursorhold_recompile = 0
-set updatetime=1000
