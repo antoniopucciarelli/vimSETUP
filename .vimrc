@@ -1,3 +1,29 @@
+"     ........  =-.             
+"  -#########*:===::#*#######* 
+"  .:*%%%%%#-::---=:=%%%%%%#+: 
+"    *%#%#%#::=----*%%#%%#+:   
+"    *%#%#%#::---*%%##%#+:     
+"    *%#%#%#::=*%%##%%+-:=-.   
+" .=-*%#%#%*-*%%##%%+-:---==-. 
+" ==:*%#%#%#%%#%%#*-:-------=- 
+"  ..*%#%%%%##%#++.-=------:   
+"    *%#%%##%%*::--------:     
+"    *%###%%*-.++::+*=-*+:-*=  
+"    *%#%%*-::=%---%-:-%: -%:  
+"    +##*-  -:%=::#=  *=  *+   
+"     ..     .-:-:.   .   .    
+"              ..              
+"
+" author: antonio pucciarelli
+" github: antoniopucciarelli
+"
+" file description: 
+"   + fast and lighweight vim setup 
+"   + this vim setup uses Vundle extension  
+"   + this vim setup   
+"   + generates rules for automatic backup of modified files 
+"
+
 syntax on 
 
 set ruler 
@@ -13,6 +39,7 @@ set expandtab
 set smartcase  
 set undodir=~/.vim/undodir 
 set undofile 
+set history=10
 set incsearch 
 set clipboard=unnamedplus
 
@@ -20,8 +47,14 @@ set clipboard=unnamedplus
 " fortran has a line limit of 80 characters per line or 132 character per line 
 filetype detect
 if (&filetype=='fortran')
+    " setting 132 colorcolumn as indicator for fortran scripts
     set colorcolumn=132
     highlight ColorColumn ctermbg=0 guibg=lightgrey
+    " configuring fortran syntax and rules 
+    let fortran_free_source=1
+    let fortran_have_tabs=1
+    let fortran_more_precise=1
+    let fortran_do_enddo=1
 endif
 
 call plug#begin('~/.vim/plugged')
@@ -59,7 +92,7 @@ autocmd StdinReadPre * let s:std_in=1
 autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
 autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | quit | endif
 
-" This line turns on backups:
+" this line turns on backups:
 set backup
 set backupdir=~/Backup/vimBackup/
 set writebackup
@@ -81,12 +114,6 @@ noremap <C-j> :resize -3<CR>
 
 " setting indentation folding 
 set foldmethod=indent 
-
-" configuring fortran syntax and rules 
-let fortran_free_source=1
-let fortran_have_tabs=1
-let fortran_more_precise=1
-let fortran_do_enddo=1
 
 " visual mode tab and S-tab mapping
 nnoremap <Tab> >>_
@@ -119,4 +146,14 @@ map <C-a> <esc>ggVG<CR>
 " setting mouse scrollng
 set mouse=nicr
 set mouse=a
+
+" setting searching rules 
+set ignorecase 
+set incsearch 
+set smartcase 
+
+" avoid mistyping commands
+command! W w
+command! Wq wq
+command! Q q
 
