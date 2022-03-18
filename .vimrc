@@ -39,8 +39,9 @@ set clipboard=unnamedplus   "
 set cursorline              " enabling cursorline highlighting 
 set cursorlineopt=both      " this option allows using both number and line highlighting for the cursorline command
 set nowrap                  " this option disable the wrapping of lines  
+set encoding=UTF-8          " setting encoding -> for dev-icons
 
-" if vim treats with fortran file
+" if vim edits fortran files 
 " fortran has a line limit of 80 characters per line or 132 character per line 
 filetype detect
 if (&filetype=='fortran')
@@ -62,7 +63,9 @@ call plug#begin('~/.vim/plugged')
     Plug 'itchyny/lightline.vim'
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
-    Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
+    Plug 'tpope/vim-fugitive'
+    Plug 'mengelbrecht/lightline-bufferline'
+    Plug 'ryanoasis/vim-devicons'
 
 call plug#end()
 
@@ -87,13 +90,8 @@ set background=dark         " enabling dark mode
 
 " NERDtree setting
 let NERDTreeShowHidden=1
-" mapping nerdtree 
-map <C-n> :NERDTreeToggle<CR>
-" starting automatically nerdtree
-" autocmd vimenter * NERDTree
-" autocmd StdinReadPre * let s:std_in=1
-" autocmd VimEnter * if argc() == 0 && !exists("s:std_in") | NERDTree | endif
-" autocmd BufEnter * if (winnr("$") == 1 && exists("b:NERDTree") && b:NERDTree.isTabTree()) | quit | endif
+" mapping NERDtree
+map <C-n> :NERDTreeToggle<CR>                               
 
 " these lines turn on backups (alternative to swap files):
 set backup
@@ -107,8 +105,8 @@ set whichwrap+=<,>,h,l,[,]
 
 " window management
 " window splitting position
-set splitbelow 
-set splitright
+set splitbelow                          " splitting new window below the active one  
+set splitright                          " splitting new window at the right of the active one 
 
 " window size adjustability
 noremap <C-l> :vertical resize +3<CR>
@@ -127,8 +125,9 @@ vnoremap <Tab> >gv
 vnoremap <S-Tab> <gv
 
 " set up lightline status
-set laststatus=2
-set noshowmode
+set laststatus=2                                            " show lightline
+set noshowmode                                              " do not show the mode under the lightline 
+set showtabline=2                                           " show the tabline everytime 
 let g:lightline = {
       \ 'colorscheme': 'seoul256',
       \ 'active': {
@@ -142,7 +141,52 @@ let g:lightline = {
       \ 'component_function': {
       \   'gitbranch': 'FugitiveHead',
       \ },
+      \ 'tabline': {
+      \   'left': [ ['buffers'] ],
+      \   'right': [ ['absolutepath'] ]
+      \ },
+      \ 'component_expand': {
+      \   'buffers': 'lightline#bufferline#buffers'
+      \ },
+      \ 'component_type': {
+      \   'buffers': 'tabsel'
       \}
+\}
+
+" tabline settings using lightline-bufferline extension 
+autocmd BufWritePost,TextChanged,TextChangedI * call lightline#update()
+let g:lightline#bufferline#unnamed = '[No Name]'
+let g:lightline#bufferline#enable_devicons = 1
+let g:lightline#bufferline#enable_nerdfont = 1
+let g:lightline#bufferline#icon_position = 'left'
+let g:lightline#bufferline#margin_left = 1
+let g:lightline#bufferline#margin_right = 1
+let g:lightline#bufferline#clickable = 1
+let g:lightline.component_raw = {'buffers': 1}
+let g:lightline#bufferline#show_number = 2
+let g:lightline#bufferline#number_separator = '| '
+
+" tabline extension using just lightline 
+"let g:lightline.tabline = {
+"    \ 'left': [ [ 'tabs' ] ],
+"    \ 'right': [ [ 'close' ] ] }
+"
+"let g:lightline.enable = {
+"    \ 'statusline': 1,
+"    \ 'tabline': 1
+"\ }
+"
+"let g:lightline.tab = {
+"    \ 'active': [ 'tabnum', 'filename', 'modified' ],
+"    \ 'inactive': [ 'tabnum', 'filename', 'modified' ] 
+"    \}
+"
+"let g:lightline.tab_component_function = {
+"      \ 'filename': 'lightline#tab#filename',
+"      \ 'modified': 'lightline#tab#modified',
+"      \ 'readonly': 'lightline#tab#readonly',
+"      \ 'tabnum': 'lightline#tab#tabnum' 
+"      \}
 
 " adding whole text selection mapping 
 map <C-a> <esc>ggVG<CR>
