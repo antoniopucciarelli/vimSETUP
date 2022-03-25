@@ -21,6 +21,10 @@
 "   + fast and lighweight vim setup 
 "   + this vim setup uses Vundle extension  
 "   + generates rules for automatic backup of modified files 
+"   + fzf file search setup 
+"   + bottomline file management setup using 'lightline' vim package
+"   + upperline tab management setup using 'lightline' fork vim package
+"   + command customization
 "
 
 syntax on                   " enabling syntax highlighting and colouring 
@@ -105,8 +109,8 @@ set whichwrap+=<,>,h,l,[,]
 
 " window management
 " window splitting position
-set splitbelow                          " splitting new window below the active one  
-set splitright                          " splitting new window at the right of the active one 
+set splitbelow " splitting new window below the active one  
+set splitright " splitting new window at the right of the active one 
 
 " window size adjustability
 noremap <C-l> :vertical resize +3<CR>
@@ -125,9 +129,9 @@ vnoremap <Tab> >gv
 vnoremap <S-Tab> <gv
 
 " set up lightline status
-set laststatus=2                                            " show lightline
-set noshowmode                                              " do not show the mode under the lightline 
-set showtabline=2                                           " show the tabline everytime 
+set laststatus=2  " show lightline
+set noshowmode    " do not show the mode under the lightline 
+set showtabline=2 " show the tabline everytime 
 let g:lightline = {
       \ 'colorscheme': 'seoul256',
       \ 'active': {
@@ -166,28 +170,6 @@ let g:lightline.component_raw = {'buffers': 1}
 let g:lightline#bufferline#show_number = 2
 let g:lightline#bufferline#number_separator = '| '
 
-" tabline extension using just lightline 
-"let g:lightline.tabline = {
-"    \ 'left': [ [ 'tabs' ] ],
-"    \ 'right': [ [ 'close' ] ] }
-"
-"let g:lightline.enable = {
-"    \ 'statusline': 1,
-"    \ 'tabline': 1
-"\ }
-"
-"let g:lightline.tab = {
-"    \ 'active': [ 'tabnum', 'filename', 'modified' ],
-"    \ 'inactive': [ 'tabnum', 'filename', 'modified' ] 
-"    \}
-"
-"let g:lightline.tab_component_function = {
-"      \ 'filename': 'lightline#tab#filename',
-"      \ 'modified': 'lightline#tab#modified',
-"      \ 'readonly': 'lightline#tab#readonly',
-"      \ 'tabnum': 'lightline#tab#tabnum' 
-"      \}
-
 " adding whole text selection mapping 
 map <C-a> <esc>ggVG<CR>
 
@@ -204,6 +186,7 @@ set smartcase
 command! W w
 command! Wq wq
 command! Q q
+command! WQ wq
 
 " fzf customization 
 let $FZF_DEFAULT_COMMAND='find -L'
@@ -223,6 +206,7 @@ let g:fzf_colors =
   \ 'header':  ['fg', 'Comment'] 
   \}
 
+" fzf statusline setup
 function! s:fzf_statusline()
   " Override statusline as you like
   highlight fzf1 ctermfg=161 ctermbg=251
@@ -231,7 +215,7 @@ function! s:fzf_statusline()
   setlocal statusline=%#fzf1#\ >\ %#fzf2#fz%#fzf3#f
 endfunction
 
-"autocmd! User FzfStatusLine call <SID>fzf_statusline()
+" fzf preview window setup
 let g:fzf_preview_window = ['up:80%', 'ctrl-/']
 let g:fzf_layout = { 'right': '55%' }
 let $FZF_DEFAULT_OPTS="--ansi --preview-window 'up:80%' --margin=0 --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
