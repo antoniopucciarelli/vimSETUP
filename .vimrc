@@ -31,8 +31,9 @@ syntax on                   " enabling syntax highlighting and colouring
 set ruler                   " enable cursor position information in file 
 set noerrorbells            " disable ring bell for error messages  
 set number                  " enables line numbers identification -- switch to relativenumber for relative position in file  
+set relativenumber          " enables relative number lines
 set softtabstop=4           " number of spaces used in the editing mode  
-set shiftwidth=4            " 
+set shiftwidth=4            "  
 set noswapfile              " disabling swap file generation -> enabling backup files as replacement 
 set tabstop=4               " association of spaces to tab command 
 set expandtab               " converts tabs into spaces  
@@ -43,7 +44,7 @@ set clipboard=unnamedplus   "
 set cursorline              " enabling cursorline highlighting 
 set cursorlineopt=both      " this option allows using both number and line highlighting for the cursorline command
 set nowrap                  " this option disable the wrapping of lines  
-set encoding=UTF-8          " setting encoding -> for dev-icons
+set encoding=utf-8          " setting encoding -> for dev-icons
 
 " if vim edits fortran files 
 " fortran has a line limit of 80 characters per line or 132 character per line 
@@ -64,12 +65,14 @@ call plug#begin('~/.vim/plugged')
     
     Plug 'morhetz/gruvbox'
     Plug 'preservim/nerdtree'    
-    Plug 'itchyny/lightline.vim'
     Plug 'junegunn/fzf', { 'do': { -> fzf#install() } }
     Plug 'junegunn/fzf.vim'
     Plug 'tpope/vim-fugitive'
-    Plug 'mengelbrecht/lightline-bufferline'
     Plug 'ryanoasis/vim-devicons'
+    Plug 'vim-airline/vim-airline'
+    Plug 'vim-airline/vim-airline-themes'
+    Plug 'lambdalisue/battery.vim'
+    Plug 'lervag/vimtex'
 
 call plug#end()
 
@@ -128,48 +131,6 @@ inoremap <S-Tab> <C-D>
 vnoremap <Tab> >gv
 vnoremap <S-Tab> <gv
 
-" set up lightline status
-set laststatus=2  " show lightline
-set noshowmode    " do not show the mode under the lightline 
-set showtabline=2 " show the tabline everytime 
-let g:lightline = {
-      \ 'colorscheme': 'seoul256',
-      \ 'active': {
-      \   'left': [ [ 'mode', 'paste' ],
-      \             [ 'filename', 'modified' ],
-      \             [ 'gitbranch' ] ],
-      \   'right': [ [ 'percent', 'lineinfo' ],
-      \              [ 'filetype' ],
-      \              [ 'fileformat', 'fileencoding' ] ]
-      \ },
-      \ 'component_function': {
-      \   'gitbranch': 'FugitiveHead',
-      \ },
-      \ 'tabline': {
-      \   'left': [ ['buffers'] ],
-      \   'right': [ ['absolutepath'] ]
-      \ },
-      \ 'component_expand': {
-      \   'buffers': 'lightline#bufferline#buffers'
-      \ },
-      \ 'component_type': {
-      \   'buffers': 'tabsel'
-      \}
-\}
-
-" tabline settings using lightline-bufferline extension 
-autocmd BufWritePost,TextChanged,TextChangedI * call lightline#update()
-let g:lightline#bufferline#unnamed = '[No Name]'
-let g:lightline#bufferline#enable_devicons = 1
-let g:lightline#bufferline#enable_nerdfont = 1
-let g:lightline#bufferline#icon_position = 'left'
-let g:lightline#bufferline#margin_left = 1
-let g:lightline#bufferline#margin_right = 1
-let g:lightline#bufferline#clickable = 1
-let g:lightline.component_raw = {'buffers': 1}
-let g:lightline#bufferline#show_number = 2
-let g:lightline#bufferline#number_separator = '| '
-
 " adding whole text selection mapping 
 map <C-a> <esc>ggVG<CR>
 
@@ -219,3 +180,55 @@ endfunction
 let g:fzf_preview_window = ['up:80%', 'ctrl-/']
 let g:fzf_layout = { 'right': '55%' }
 let $FZF_DEFAULT_OPTS="--ansi --preview-window 'up:80%' --margin=0 --preview 'bat --color=always --style=header,grid --line-range :300 {}'"
+
+" battery information setup
+let g:battery#update_interval = 1000
+let g:battery_watch_on_startup = 1
+let g:battery#graph_width = 5
+let g:battery#symbol_discharging = ' '
+let g:battery#symbol_charging = '⚡'
+let g:battery#component_format = "battery: %v%% %g %s"
+let g:battery#update_statusline = 1 
+
+" airline setup
+set noshowmode
+let g:airline_theme = 'gruvbox'
+
+" tabline 
+" -- separator
+let g:airline#extensions#tabline#left_sep = ''
+let g:airline#extensions#tabline#right_sep = ''
+let g:airline#extensions#tabline#left_alt_sep = ''
+let g:airline#extensions#tabline#right_alt_sep = ''
+" -- tab/buffer 
+let g:airline#extensions#tabline#enabled = 1
+let g:airline#extensions#tabline#formatter = 'unique_tail'
+let g:airline#extensions#tabline#buffer_nr_show = 0
+let g:airline#extensions#tabline#tabnr_formatter = 'tabnr'
+let g:airline#extensions#tabline#tab_nr_type = 1 
+let g:airline#extensions#tabline#show_tab_type = 1
+let g:airline#extensions#tabline#show_close_button = 0
+
+" statusline 
+" -- separator
+let g:airline_left_sep = ''
+let g:airline_right_sep = ''
+let g:airline_left_alt_sep = ''
+let g:airline_right_alt_sep = ''
+" -- fonts 
+let g:airline_powerline_fonts = 1
+" -- status line
+let g:airline#extensions#battery#enabled = 1
+let g:airline_section_a = airline#section#create(['mode'])
+let g:airline_section_b = '%t' 
+let g:airline_section_c = ''
+let g:airline_section_x = '%p%% | %{battery#component()}' 
+let g:airline_section_y = '%{fugitive#statusline()}'
+let g:airline_section_z = '%{&filetype}'
+let g:airline_section_warning = ''
+
+" -- no showmode 
+set noshowmode
+
+" -- theme
+let g:airline_theme = 'tomorrow'
